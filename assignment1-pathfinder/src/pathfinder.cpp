@@ -65,10 +65,7 @@ int main()
     add_double_edge(g, 'F', 'G');
 
     raylib::AudioDevice audio;
-
-    raylib::Sound coin("../../deps/raylib-cpp/examples/audio/resources/coin.wav");
-
-    //finds audio source 
+    raylib::Sound coin("../../deps/raylib-cpp/examples/audio/resources/coin.wav"); // Set coin sound
 
     int t{ 60 }; // time
     int start_time = GetTime();
@@ -85,7 +82,7 @@ int main()
         int remaining_time = t - elapsed_time;
 
         if (remaining_time <= 0) {
-            remaining_time = 0;
+            remaining_time = 0; // Update to add game over and update the game / scores
         }
 
 
@@ -107,12 +104,29 @@ int main()
             {
                 node_t clickedNode = *opt;
 
-                coin.Play();//plays coin audio
                 // Check if the node is connected to previous node
                 if (is_connected(g, player_path.back(), clickedNode))
                 {
-                    coin.Play();//plays coin audio
-                    player_path.push_back(clickedNode);
+                    if (clickedNode == end) {
+                        player_path.push_back(clickedNode);
+                        coin.Play();//plays coin audio
+                        tokens = tokens - path_cost(player_path);
+                        // Add end game update
+                        score = tokens;
+                        if (score > high_score) {
+                            high_score = score;
+                        }
+                    }
+                    else
+                    {
+                        player_path.push_back(clickedNode);
+                        coin.Play();//plays coin audio
+                        tokens = tokens - path_cost(player_path); // remove path cost from tokens
+                    }
+                }
+                if (clickedNode == end || tokens <= 0)
+                {
+                    // Add score/update high score, reward player with tokens and reset
                 }
             }
         }
