@@ -1,7 +1,0 @@
-﻿  Building Custom Rule C:/Users/B00823900/OneDrive - University of the West of Scotland/Documents/AIClass-2/assignment1-pathfinder/src/CMakeLists.txt
-  pathfinder.cpp
-C:\Users\B00823900\OneDrive - University of the West of Scotland\Documents\AIClass-2\assignment1-pathfinder\src\pathfinder.cpp(25,43): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\B00823900\OneDrive - University of the West of Scotland\Documents\AIClass-2\assignment1-pathfinder\src\pathfinder.cpp(25,29): warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
-C:\Users\B00823900\OneDrive - University of the West of Scotland\Documents\AIClass-2\assignment1-pathfinder\src\pathfinder.cpp(74,20): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\B00823900\OneDrive - University of the West of Scotland\Documents\AIClass-2\assignment1-pathfinder\src\pathfinder.cpp(84,26): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-  pathfinder.vcxproj -> C:\Users\B00823900\OneDrive - University of the West of Scotland\Documents\AIClass-2\assignment1-pathfinder\build\src\Debug\pathfinder.exe
