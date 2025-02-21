@@ -9,18 +9,18 @@
 #include <iterator>  // std::back_inserter
 #include "graph.hpp"
 
-auto num_nodes(const Graph& g)
+inline auto num_nodes(const Graph& g)
 {
   return std::distance(g.nodes.cbegin(), g.nodes.cend());
 }
 
-auto num_edges(const Graph& g)
+inline auto num_edges(const Graph& g)
 {
   auto f = [](const auto&x, const auto& y) { return x + y.second.size(); };
   return std::accumulate(g.nodes.cbegin(), g.nodes.cend(), std::size_t{0}, f);
 }
 
-void add_node(Graph& g, const node_t& n, const coord_t& xy)
+inline void add_node(Graph& g, const node_t& n, const coord_t& xy)
 {
   g.nodes[n] = {};
   node_info[n] = xy;
@@ -28,7 +28,7 @@ void add_node(Graph& g, const node_t& n, const coord_t& xy)
 
 // Add two edges to the Graph g: one between n1 and n2; and the other
 // between n2 and n1. The costs are set at cost1 and cost2 respectively.
-void add_double_edge(Graph& g, const node_t& n1, const node_t& n2,
+inline void add_double_edge(Graph& g, const node_t& n1, const node_t& n2,
                      const double cost1, const double cost2)
 {
   g.nodes[n1].push_back(n2);
@@ -39,13 +39,13 @@ void add_double_edge(Graph& g, const node_t& n1, const node_t& n2,
 
 // Add two edges to the Graph g: one between n1 and n2; and the other
 // between n2 and n1. The edge costs default to the euclidean distance.
-void add_double_edge(Graph& g, const node_t& n1, const node_t& n2)
+inline void add_double_edge(Graph& g, const node_t& n1, const node_t& n2)
 {
   const double cost = (node_info[n1]-node_info[n2]).length();
   add_double_edge(g, n1, n2, cost, cost);
 }
 
-std::optional<node_t> get_nearby_node(coord_t coord2)
+inline std::optional<node_t> get_nearby_node(coord_t coord2)
 {
   for (const auto& [node, coord1] : node_info)
   {
@@ -58,7 +58,7 @@ std::optional<node_t> get_nearby_node(coord_t coord2)
   return std::nullopt;
 }
 
-void draw_cost_line(const node_t& n1, const node_t& n2, const unsigned int cost)
+inline void draw_cost_line(const node_t& n1, const node_t& n2, const unsigned int cost)
 {
   const coord_t& coord_n1 = node_info[n1];
   const coord_t& coord_n2 = node_info[n2];
@@ -78,7 +78,7 @@ void draw_cost_line(const node_t& n1, const node_t& n2, const unsigned int cost)
   DrawTextPro(font, text, mid, tsz/2, rot, font_size, spacing, BROWN);
 }
 
-void draw_graph(Graph& g)
+inline void draw_graph(Graph& g)
 {
   for (const auto& [edge, dcost] : edge_info)
   {

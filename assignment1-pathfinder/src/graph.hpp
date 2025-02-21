@@ -8,6 +8,8 @@
 #include <cmath>
 #include <functional>
 
+#include "implementation.hpp" // in redblob-games
+
 // We need this class template specialisation of std::hash before declaring
 // std::unordered_map variables involving a std::pair; such as edge_t.
 
@@ -26,14 +28,14 @@ namespace std
 using node_t  = char;
 using edge_t  = std::pair<node_t, node_t>;
 using coord_t = ai::Vector2;
-std::unordered_map<node_t, coord_t> node_info;
-std::unordered_map<edge_t, double>  edge_info;
+inline std::unordered_map<node_t, coord_t> node_info;
+inline std::unordered_map<edge_t, double>  edge_info;
 
 const float line_thickness = 5.0f;
 const float node_radius    = line_thickness * 2.0f;
 
 inline double heuristic(node_t, node_t);
-#include "implementation.hpp" // in redblob-games
+
 
 // neighbors and cost are needed by a_star_search
 struct Graph
