@@ -17,6 +17,8 @@ private:
     const int w{ 2880 / 2 }, h{ 1620 / 2 };
     const float half_w{ w / 2.0f }, half_h{ h / 2.0f }, gap{ w / 8.0f };
     int m_startTime;
+    int m_remainingTime;
+    int m_elapsedTime;
     int m_time{ 60 };
     int m_tokens{ 2000 };
     int m_score;
@@ -24,6 +26,7 @@ private:
     
     node_t m_start;
     node_t m_end;
+    node_t m_curr;
 
     std::vector<node_t> m_playerPath;
 
@@ -42,7 +45,19 @@ public:
     unsigned int path_cost(const std::vector<node_t>& path);
 
     std::vector<node_t> astar_pathfind(const Graph& g, node_t start, node_t goal);
+
+    void draw();
     
+    void pop_last_node();
+
+    void push_node(node_t node);
+
+    bool node_clicked(node_t node);
+
+    void calc_score();
+
+    void proc_node_click(node_t node);
+
     void run();
 };
 

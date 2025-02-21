@@ -76,71 +76,138 @@ std::vector<node_t> Pathfinder::astar_pathfind(const Graph &g, node_t start, nod
     return path;
 }
 
+void Pathfinder::pop_last_node()
+{
+    node_t n1 = m_playerPath.back();
+    m_playerPath.pop_back();
+    node_t n2 = m_playerPath.back();
+
+    std::vector<node_t> pathCostList;
+    pathCostList.push_back(n1);
+    pathCostList.push_back(n2);
+
+    m_tokens = m_tokens + path_cost(pathCostList); // refind path cost to tokens
+    m_curr = m_playerPath.back();
+}
+
+void Pathfinder::push_node(node_t node)
+{
+    node_t n1 = m_playerPath.back();
+    node_t n2 = node;
+
+    std::vector<node_t> pathCostList;
+    pathCostList.push_back(n1);
+    pathCostList.push_back(n2);
+
+    m_playerPath.push_back(node);
+    m_coinSound.Play(); // plays coin audio
+    m_tokens = m_tokens - path_cost(pathCostList); // remove path cost from tokens
+}
+
+bool Pathfinder::node_clicked(node_t node)
+{
+    for (auto n : m_playerPath)
+    {
+        if (n == node)
+        {
+            return true;
+        }
+    }
+
+
+    return false;
+}
+
+void Pathfinder::calc_score()
+{
+    std::vector<node_t> idealPath = astar_pathfind(m_graph, m_start, m_end);
+
+    int idealCost = path_cost(idealPath);
+    int currCost = path_cost(m_playerPath);
+
+    m_score = idealCost - (idealCost - currCost);
+
+    if (m_score > m_highScore)
+    {
+        m_highScore = m_score;
+    }
+}
+
+void Pathfinder::proc_node_click(node_t clickedNode)
+{
+    if (clickedNode == m_curr)
+    {
+        pop_last_node();
+        return;
+    }
+
+    if (node_clicked(clickedNode))
+    {
+        return;
+    }
+
+    // Check if the node is connected to previous node
+    if (is_connected(m_playerPath.back(), clickedNode))
+    {
+        push_node(clickedNode);
+        m_curr = clickedNode;
+    }
+
+    if (m_curr == m_end || m_tokens <= 0)
+    {
+        calc_score();
+
+        intitialise();
+    }
+}
+
 void Pathfinder::run()
 {
     while (!m_window.ShouldClose()) // Detect window close button or ESC key
     {
-        BeginDrawing();
+        m_elapsedTime = GetTime() - m_startTime;
+        m_remainingTime = m_time - m_elapsedTime;
 
-        int elapsed_time = GetTime() - m_startTime;
-        int remaining_time = m_time - elapsed_time;
-
-        if (remaining_time <= 0) {
-            remaining_time = 0; // Update to add game over and update the game / scores
+        if (m_remainingTime <= 0) {
+            calc_score();
+            intitialise();
         }
-
-        DrawText(TextFormat("Tokens: %04i", m_tokens), 5, 5, 20, BLUE);
-        DrawText(TextFormat("Score: %06i", m_score), 5, 45, 20, BLUE);
-        DrawText(TextFormat("Highscore: %06i", m_highScore), 5, 85, 20, BLUE);
-        DrawText(TextFormat("Time: %02i secs", remaining_time), 5, 125, 20, BLACK);
-
-        ClearBackground(LIGHTGRAY);
-
-        draw_graph(m_graph);
-
-        DrawCircleV(node_info[m_start], node_radius * 1.1, GREEN); // Colour starting node green
-        DrawCircleV(node_info[m_end], node_radius * 1.1, RED); // Colour the end node red
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
             if (auto opt = get_nearby_node(GetMousePosition()))
             {
                 node_t clickedNode = *opt;
-
-                // Check if the node is connected to previous node
-                if (is_connected(m_playerPath.back(), clickedNode))
-                {
-                    if (clickedNode == m_end) {
-                        m_playerPath.push_back(clickedNode);
-                        m_coinSound.Play();//plays coin audio
-                        m_tokens = m_tokens - path_cost(m_playerPath);
-                        // Add end game update
-                        m_score = m_tokens;
-
-                        if (m_score > m_highScore) {
-                            m_highScore = m_score;
-                        }
-                    }
-                    else
-                    {
-                        m_playerPath.push_back(clickedNode);
-                        m_coinSound.Play();//plays coin audio
-                        m_tokens = m_tokens - path_cost(m_playerPath); // remove path cost from tokens
-                    }
-                }
-                if (clickedNode == m_end || m_tokens <= 0)
-                {
-                    // Add score/update high score, reward player with tokens and reset
-                }
+                proc_node_click(clickedNode);
             }
         }
 
-        for (size_t i = 0; i + 1 < m_playerPath.size(); ++i)
-        {
-            // Highlight the edge between nodes
-            DrawLineEx(node_info[m_playerPath[i]], node_info[m_playerPath[i + 1]], 5, YELLOW);
-        }
-
-        EndDrawing();
+        draw();
     }
+}
+
+
+void Pathfinder::draw()
+{
+    BeginDrawing();
+
+    DrawText(TextFormat("Tokens: %04i", m_tokens), 5, 5, 20, BLUE);
+    DrawText(TextFormat("Score: %06i", m_score), 5, 45, 20, BLUE);
+    DrawText(TextFormat("Highscore: %06i", m_highScore), 5, 85, 20, BLUE);
+    DrawText(TextFormat("Time: %02i secs", m_remainingTime), 5, 125, 20, BLACK);
+
+    ClearBackground(LIGHTGRAY);
+
+    draw_graph(m_graph);
+
+    DrawCircleV(node_info[m_start], node_radius * 1.1, GREEN); // Colour starting node green
+    DrawCircleV(node_info[m_end], node_radius * 1.1, RED); // Colour the end node red
+
+    for (size_t i = 0; i + 1 < m_playerPath.size(); ++i)
+    {
+        // Highlight the edge between nodes
+        DrawLineEx(node_info[m_playerPath[i]], node_info[m_playerPath[i + 1]], 5, YELLOW);
+    }
+
+    EndDrawing();
 }
