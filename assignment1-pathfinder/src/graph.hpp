@@ -59,7 +59,8 @@ inline double heuristic(node_t next, node_t goal)
 {
     const coord_t& npos = node_info[next]; // find the postion of the next node 
     const coord_t& gpos = node_info[goal]; // find the postion of the end node 
-    return std::sqrt(std::pow(npos.x - gpos.x, 2) + std::pow(npos.y - gpos.y, 2)); // computes the distance using  euclidean distance 
+    return std::sqrt(std::pow(npos.x - gpos.x, 2) + std::pow(npos.y - gpos.y, 2)); // computes the distance using euclidean distance 
+    //return std::abs(npos.x - gpos.x) + std::abs(npos.y - gpos.y);   // compute distance using manhattan distance
 }
 
 #endif // _GRAPH_HPP_

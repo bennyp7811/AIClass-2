@@ -23,6 +23,8 @@ private:
     int m_tokens{ 2000 };
     int m_score;
     int m_highScore;
+
+    bool m_gameOver;
     
     node_t m_start;
     node_t m_end;
@@ -38,6 +40,8 @@ private:
 public:
     Pathfinder();
     ~Pathfinder();
+
+    void reset();
 
     void intitialise();
 
@@ -59,9 +63,11 @@ public:
 
     bool node_clicked(node_t node);
 
-    void calc_score();
+    int calc_score();
 
     void proc_node_click(node_t node);
+
+    void update_time();
 
     void run();
 };

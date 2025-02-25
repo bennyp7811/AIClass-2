@@ -16,7 +16,14 @@ Pathfinder::~Pathfinder()
 {
 }
 
+void Pathfinder::reset()
+{
+    m_playerPath.clear();
 
+    SetStartEndNodes();
+
+    m_playerPath.push_back(m_start); // initialize the player_path with start node
+}
 
 void Pathfinder::intitialise()
 {
@@ -44,14 +51,12 @@ void Pathfinder::intitialise()
     add_double_edge(m_graph, 'F', 'G');
 
     m_startTime = GetTime();
-    SetStartEndNodes();
 
-    m_playerPath.clear();
-
-    m_playerPath.push_back(m_start); // initialize the player_path with start node
+    reset();
 
     m_tokens = 2000;
     m_score = 0;
+    m_gameOver = false;
 }
 
 bool Pathfinder::is_connected(node_t node1, node_t node2)
@@ -147,19 +152,14 @@ bool Pathfinder::node_clicked(node_t node)
     return false;
 }
 
-void Pathfinder::calc_score()
+int Pathfinder::calc_score()
 {
     std::vector<node_t> idealPath = astar_pathfind(m_graph, m_start, m_end);
 
     int idealCost = path_cost(idealPath);
     int currCost = path_cost(m_playerPath);
 
-    m_score = idealCost - (idealCost - currCost);
-
-    if (m_score > m_highScore)
-    {
-        m_highScore = m_score;
-    }
+    return idealCost - (idealCost - currCost);
 }
 
 void Pathfinder::proc_node_click(node_t clickedNode)
@@ -182,34 +182,54 @@ void Pathfinder::proc_node_click(node_t clickedNode)
         m_curr = clickedNode;
     }
 
-    if (m_curr == m_end || m_tokens <= 0)
+    if (m_curr == m_end)
     {
-        calc_score();
-
-        intitialise();
+        m_score += calc_score();
+        reset();
+        
     }
+}
+
+void Pathfinder::update_time()
+{
+    m_elapsedTime = GetTime() - m_startTime;
+    m_remainingTime = m_time - m_elapsedTime;
 }
 
 void Pathfinder::run()
 {
     while (!m_window.ShouldClose()) // Detect window close button or ESC key
     {
-        m_elapsedTime = GetTime() - m_startTime;
-        m_remainingTime = m_time - m_elapsedTime;
-
-        if (m_remainingTime <= 0) {
-            calc_score();
-            intitialise();
-        }
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        if (!m_gameOver)
         {
-            if (auto opt = get_nearby_node(GetMousePosition()))
+            update_time();
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
-                node_t clickedNode = *opt;
-                proc_node_click(clickedNode);
+                if (auto opt = get_nearby_node(GetMousePosition()))
+                {
+                    node_t clickedNode = *opt;
+                    proc_node_click(clickedNode);
+                }
             }
         }
+        else
+        {
+            if (m_score > m_highScore)
+            {
+                m_highScore = m_score;
+            }
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                intitialise();
+            }
+        }
+
+        if (m_remainingTime <= 0 || m_tokens <= 0) {
+            m_gameOver = true;
+        }
+
 
         draw();
     }
@@ -236,6 +256,11 @@ void Pathfinder::draw()
     {
         // Highlight the edge between nodes
         DrawLineEx(node_info[m_playerPath[i]], node_info[m_playerPath[i + 1]], 5, YELLOW);
+    }
+
+    if (m_gameOver)
+    {
+        DrawText("GAME OVER", m_window.GetWidth() / 4, m_window.GetHeight() / 2, 128, RED);
     }
 
     EndDrawing();
