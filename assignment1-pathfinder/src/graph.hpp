@@ -57,9 +57,9 @@ struct Graph
 
 inline double heuristic(node_t next, node_t goal)
 {
-  const coord_t& npos = node_info[next];
-  const coord_t& gpos = node_info[goal];
-  return std::abs(npos.x - gpos.x) + std::abs(npos.y - gpos.y);
+    const coord_t& npos = node_info[next]; // find the postion of the next node 
+    const coord_t& gpos = node_info[goal]; // find the postion of the end node 
+    return std::sqrt(std::pow(npos.x - gpos.x, 2) + std::pow(npos.y - gpos.y, 2)); // computes the distance using  euclidean distance 
 }
 
 #endif // _GRAPH_HPP_
