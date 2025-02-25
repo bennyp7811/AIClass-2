@@ -29,6 +29,7 @@ private:
     node_t m_curr;
 
     std::vector<node_t> m_playerPath;
+    std::vector<node_t> m_availableNodes;
 
     Graph m_graph;
     raylib::Window m_window{ w, h, "Pathfinder" };
@@ -41,6 +42,10 @@ public:
     void intitialise();
 
     bool is_connected(node_t node1, node_t node2);
+
+    void SetStartEndNodes();
+
+    node_t GetRandomNode();
 
     unsigned int path_cost(const std::vector<node_t>& path);
 

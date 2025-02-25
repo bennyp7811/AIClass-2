@@ -3,11 +3,20 @@
 
 Pathfinder::Pathfinder()
 {
+    m_availableNodes.push_back('A');
+    m_availableNodes.push_back('B');
+    m_availableNodes.push_back('C');
+    m_availableNodes.push_back('D');
+    m_availableNodes.push_back('E');
+    m_availableNodes.push_back('F');
+    m_availableNodes.push_back('G');
 }
 
 Pathfinder::~Pathfinder()
 {
 }
+
+
 
 void Pathfinder::intitialise()
 {
@@ -35,8 +44,7 @@ void Pathfinder::intitialise()
     add_double_edge(m_graph, 'F', 'G');
 
     m_startTime = GetTime();
-    m_start = 'A';
-    m_end = 'G';
+    SetStartEndNodes();
 
     m_playerPath.clear();
 
@@ -50,6 +58,26 @@ bool Pathfinder::is_connected(node_t node1, node_t node2)
 {
     // Check if an edge exists between node 1 and node 2
     return edge_info.find(std::pair{ node1, node2 }) != edge_info.end();
+}
+
+void Pathfinder::SetStartEndNodes()
+{
+    m_start = GetRandomNode();
+
+    m_end = GetRandomNode();
+
+    while (m_start == m_end)
+    {
+        m_end = GetRandomNode();
+    }
+}
+
+node_t Pathfinder::GetRandomNode()
+{
+    int min = 0;
+    int max = m_availableNodes.size() - 1;
+    int idx = rand() % (max - min + 1) + min;
+    return m_availableNodes[idx];
 }
 
 unsigned int Pathfinder::path_cost(const std::vector<node_t> &path)
@@ -80,6 +108,7 @@ void Pathfinder::pop_last_node()
 {
     node_t n1 = m_playerPath.back();
     m_playerPath.pop_back();
+
     node_t n2 = m_playerPath.back();
 
     std::vector<node_t> pathCostList;
@@ -135,7 +164,7 @@ void Pathfinder::calc_score()
 
 void Pathfinder::proc_node_click(node_t clickedNode)
 {
-    if (clickedNode == m_curr)
+    if (clickedNode == m_curr && m_playerPath.size() > 1)
     {
         pop_last_node();
         return;
