@@ -3,13 +3,7 @@
 
 Pathfinder::Pathfinder()
 {
-    m_availableNodes.push_back('A');
-    m_availableNodes.push_back('B');
-    m_availableNodes.push_back('C');
-    m_availableNodes.push_back('D');
-    m_availableNodes.push_back('E');
-    m_availableNodes.push_back('F');
-    m_availableNodes.push_back('G');
+
 }
 
 Pathfinder::~Pathfinder()
@@ -31,6 +25,29 @@ void Pathfinder::Initialise()
 
     m_graph.nodes.clear();
 
+
+    create_static_graph();
+    //generate_graph(10);
+
+    m_startTime = GetTime();
+
+    reset();
+
+    m_tokens = 2000;
+    m_score = 0;
+    m_gameOver = false;
+}
+
+void Pathfinder::create_static_graph()
+{
+    m_availableNodes.push_back('A');
+    m_availableNodes.push_back('B');
+    m_availableNodes.push_back('C');
+    m_availableNodes.push_back('D');
+    m_availableNodes.push_back('E');
+    m_availableNodes.push_back('F');
+    m_availableNodes.push_back('G');
+
     add_node(m_graph, 'A', { half_w - gap, half_h });
     add_node(m_graph, 'B', { half_w, half_h });
     add_node(m_graph, 'C', { half_w, half_h - gap });
@@ -49,14 +66,57 @@ void Pathfinder::Initialise()
     add_double_edge(m_graph, 'C', 'F');
     add_double_edge(m_graph, 'C', 'G');
     add_double_edge(m_graph, 'F', 'G');
+}
 
-    m_startTime = GetTime();
+void Pathfinder::generate_random_graph(int nodeCount)
+{
+    int maxCharVal = CHAR_MAX;
 
-    reset();
+    if (nodeCount > maxCharVal)
+    {
+        throw std::exception("max node count exceeded.");
+    }
 
-    m_tokens = 2000;
-    m_score = 0;
-    m_gameOver = false;
+    for (int i = 0; i < maxCharVal; i++)
+    {
+        m_availableNodes.push_back(i);
+    }
+
+    for (char c = 0; c < nodeCount; c++)
+    {
+        coord_t coord = get_available_coord();
+
+        m_nodeCoords.insert({ c, coord });
+
+        add_node(m_graph, c, coord);
+    }
+}
+
+coord_t Pathfinder::get_available_coord()
+{
+    int maxX = half_w + gap;
+    int maxY = half_h + gap;
+    int minX = half_w - gap;
+    int minY = half_h - gap;
+    int spacing = 50;
+
+    float x = std::rand() % (maxX - minX + 1) + minX;
+    float y = std::rand() % (maxY - minY + 1) + minY;
+
+    coord_t newCoord = { x, y };
+
+    for (auto node : m_nodeCoords)
+    {
+        coord_t nodeCoord = node.second;
+        int dist = calc_distance(nodeCoord, newCoord);
+
+        if (dist < spacing)
+        {
+            return get_available_coord();
+        }
+    }
+    
+    return newCoord;
 }
 
 bool Pathfinder::is_connected(node_t node1, node_t node2)
@@ -85,12 +145,14 @@ node_t Pathfinder::get_random_node()
     return m_availableNodes[idx];
 }
 
+
 unsigned int Pathfinder::path_cost(const std::vector<node_t> &path)
 {    
     double dcost = 0;
-    if (path.size() >= 2) // then we have some lines to draw
+    if (path.size() >= 2)                                                       // then we have some lines to draw
     {
         const int num_edges = path.size() - 1;
+
         for (int i = 0; i < num_edges; i++)
         {
             dcost = dcost + edge_info[std::pair{ path[i], path[i + 1] }];
@@ -120,7 +182,7 @@ void Pathfinder::pop_last_node()
     pathCostList.push_back(n1);
     pathCostList.push_back(n2);
 
-    m_tokens = m_tokens + path_cost(pathCostList); // refind path cost to tokens
+    m_tokens = m_tokens + path_cost(pathCostList);                                      // refind path cost to tokens
     m_curr = m_playerPath.back();
 }
 
@@ -135,7 +197,7 @@ void Pathfinder::push_node(node_t node)
 
     m_playerPath.push_back(node);
     m_coinSound.Play(); // plays coin audio
-    m_tokens = m_tokens - path_cost(pathCostList); // remove path cost from tokens
+    m_tokens = m_tokens - path_cost(pathCostList);                                      // remove path cost from tokens
 }
 
 bool Pathfinder::node_clicked(node_t node)

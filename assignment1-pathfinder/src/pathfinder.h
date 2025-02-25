@@ -32,6 +32,7 @@ private:
 
     std::vector<node_t> m_playerPath;
     std::vector<node_t> m_availableNodes;
+    std::unordered_map<node_t,coord_t> m_nodeCoords;
 
     Graph m_graph;
     raylib::Window m_window{ w, h, "Pathfinder" };
@@ -61,6 +62,12 @@ private:
     void proc_node_click(node_t node);                                                      // processes a click event for a given node.
 
     void update_time();                                                                     // updates game time / timers.
+
+    void create_static_graph();                                                             // generates a statically defined graph (hard-coded)
+
+    void generate_random_graph(int nodeCount);                                              // generate new random graph (wip : Not finnished)
+
+    coord_t get_available_coord();                                                          // gets an available coordinate not already occupied by a node
 
 public:
     Pathfinder();               //Constructor 
