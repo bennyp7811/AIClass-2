@@ -237,29 +237,28 @@ void Pathfinder::Run()
 
 void Pathfinder::Draw()
 {
-    BeginDrawing();
+    BeginDrawing();                                                                                     // Begin canvas
 
-    DrawText(TextFormat("Tokens: %04i", m_tokens), 5, 5, 20, BLUE);
-    DrawText(TextFormat("Score: %06i", m_score), 5, 45, 20, BLUE);
-    DrawText(TextFormat("Highscore: %06i", m_highScore), 5, 85, 20, BLUE);
-    DrawText(TextFormat("Time: %02i secs", m_remainingTime), 5, 125, 20, BLACK);
+    ClearBackground(LIGHTGRAY);                                                                         // Clear background colour to grey
 
-    ClearBackground(LIGHTGRAY);
+    DrawText(TextFormat("Tokens: %04i", m_tokens), 5, 5, 20, BLUE);                                     // Draw available tokens
+    DrawText(TextFormat("Score: %06i", m_score), 5, 45, 20, BLUE);                                      // Draw current score
+    DrawText(TextFormat("Highscore: %06i", m_highScore), 5, 85, 20, BLUE);                              // Draw current high score
+    DrawText(TextFormat("Time: %02i secs", m_remainingTime), 5, 125, 20, BLACK);                        // Draw remaining time
 
-    draw_graph(m_graph);
+    draw_graph(m_graph);                                                                                // Draw the current graph
 
-    DrawCircleV(node_info[m_start], node_radius * 1.1, GREEN); // Colour starting node green
-    DrawCircleV(node_info[m_end], node_radius * 1.1, RED); // Colour the end node red
+    DrawCircleV(node_info[m_start], node_radius * 1.1, GREEN);                                          // Colour starting node green
+    DrawCircleV(node_info[m_end], node_radius * 1.1, RED);                                              // Colour the end node red
 
-    for (size_t i = 0; i + 1 < m_playerPath.size(); ++i)
+    for (size_t i = 0; i + 1 < m_playerPath.size(); ++i)                                                // for each node in the current player path
     {
-        // Highlight the edge between nodes
-        DrawLineEx(node_info[m_playerPath[i]], node_info[m_playerPath[i + 1]], 5, YELLOW);
+        DrawLineEx(node_info[m_playerPath[i]], node_info[m_playerPath[i + 1]], 5, YELLOW);              // Highlight the edge between nodes
     }
 
-    if (m_gameOver)
+    if (m_gameOver)                                                                                     // if the game is over
     {
-        DrawText("GAME OVER", m_window.GetWidth() / 4, m_window.GetHeight() / 2, 128, RED);
+        DrawText("GAME OVER", m_window.GetWidth() / 4, m_window.GetHeight() / 2, 128, RED);             // display "game over" text
     }
 
     EndDrawing();
