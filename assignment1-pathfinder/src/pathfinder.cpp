@@ -197,35 +197,35 @@ void Pathfinder::update_time()
 
 void Pathfinder::Run()
 {
-    while (!m_window.ShouldClose()) // Detect window close button or ESC key
+    while (!m_window.ShouldClose())                                                 // Detect window close button or ESC key
     {
-        if (!m_gameOver)
+        if (!m_gameOver)                                                            // if the game is not over
         {
-            update_time();
+            update_time();                                                          // update gane time
 
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))                            // check if the player has clicked the left mouse button
             {
-                if (auto opt = get_nearby_node(GetMousePosition()))
+                if (auto opt = get_nearby_node(GetMousePosition()))                 // get nearest node to lm button click
                 {
-                    node_t clickedNode = *opt;
-                    proc_node_click(clickedNode);
+                    node_t clickedNode = *opt;                                      
+                    proc_node_click(clickedNode);                                   // process node click event
                 }
             }
         }
-        else
+        else                                                                        // if game is over
         {
-            if (m_score > m_highScore)
+            if (m_score > m_highScore)                                              // update the player high score if current score is greater than it
             {
                 m_highScore = m_score;
             }
 
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))                            // if the user clicks the left mouse button
             {
-                Initialise();
+                Initialise();                                                       // re-initialise the game
             }
         }
 
-        if (m_remainingTime <= 0 || m_tokens <= 0) {
+        if (m_remainingTime <= 0 || m_tokens <= 0) {                                // gameover state is set if either remaining time or available tokens is less than or equal to 0
             m_gameOver = true;
         }
 
