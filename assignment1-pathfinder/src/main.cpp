@@ -5,8 +5,8 @@ Pathfinder pathfinder;
 
 int main()
 {
-    pathfinder.intitialise();
-    pathfinder.run();
+    pathfinder.Initialise();
+    pathfinder.Run();
     
     return 0;
 }

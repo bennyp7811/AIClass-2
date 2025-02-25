@@ -37,39 +37,40 @@ private:
     raylib::Window m_window{ w, h, "Pathfinder" };
     raylib::AudioDevice m_audio;
     raylib::Sound m_coinSound{ "../../deps/raylib-cpp/examples/audio/resources/coin.wav" };
-public:
-    Pathfinder();
-    ~Pathfinder();
-
-    void reset();
-
-    void intitialise();
-
-    bool is_connected(node_t node1, node_t node2);
-
-    void SetStartEndNodes();
-
-    node_t GetRandomNode();
 
     unsigned int path_cost(const std::vector<node_t>& path);
 
     std::vector<node_t> astar_pathfind(const Graph& g, node_t start, node_t goal);
 
-    void draw();
+    bool is_connected(node_t node1, node_t node2);
+
+    void reset();
+
+public:
+    Pathfinder();
+    ~Pathfinder();
+
+    void Initialise();
+   
+    void SetStartEndNodes();
+
+    node_t GetRandomNode();
+
+    void Draw();
     
-    void pop_last_node();
+    void PopLastNode();
 
-    void push_node(node_t node);
+    void PushNode(node_t node);
 
-    bool node_clicked(node_t node);
+    bool NodeClicked(node_t node);
 
-    int calc_score();
+    int CalcScore();
 
-    void proc_node_click(node_t node);
+    void ProcessNodeClick(node_t node);
 
-    void update_time();
+    void UpdateTime();
 
-    void run();
+    void Run();
 };
 
 
