@@ -38,39 +38,40 @@ private:
     raylib::AudioDevice m_audio;
     raylib::Sound m_coinSound{ "../../deps/raylib-cpp/examples/audio/resources/coin.wav" };
 
-    unsigned int path_cost(const std::vector<node_t>& path);
+    unsigned int path_cost(const std::vector<node_t>& path);                                // calculates the cost of a given path
 
-    std::vector<node_t> astar_pathfind(const Graph& g, node_t start, node_t goal);
+    std::vector<node_t> astar_pathfind(const Graph& g, node_t start, node_t goal);          // calculates the most optimal path using the a* pathfinding algorithm
 
-    bool is_connected(node_t node1, node_t node2);
+    bool is_connected(node_t node1, node_t node2);                                          // checks wheather any given two nodes/points are connected with one another
 
-    void reset();
+    void reset();                                                                           // reset the current game
+
+    void set_startend_nodes();                                                              // initialises the start and end nodes for the current game
+
+    node_t get_random_node();                                                               // gets a random node from the list of available nodes
+
+    void pop_last_node();                                                                   // removes the last node from the player path
+
+    void push_node(node_t node);                                                            // adds a new node to the player path
+
+    bool node_clicked(node_t node);                                                         // checks to see whether the given node has been clicked
+
+    int calc_score();                                                                       // calculates the score for the current game
+
+    void proc_node_click(node_t node);                                                      // processes a click event for a given node.
+
+    void update_time();                                                                     // updates game time / timers.
 
 public:
-    Pathfinder();
-    ~Pathfinder();
+    Pathfinder();               //Constructor 
 
-    void Initialise();
+    ~Pathfinder();              //Destructor
+
+    void Initialise();          //Initialise
    
-    void SetStartEndNodes();
+    void Run();                 //Run loop
 
-    node_t GetRandomNode();
-
-    void Draw();
-    
-    void PopLastNode();
-
-    void PushNode(node_t node);
-
-    bool NodeClicked(node_t node);
-
-    int CalcScore();
-
-    void ProcessNodeClick(node_t node);
-
-    void UpdateTime();
-
-    void Run();
+    void Draw();                // Render/Draw call
 };
 
 

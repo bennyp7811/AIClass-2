@@ -20,7 +20,7 @@ void Pathfinder::reset()
 {
     m_playerPath.clear();
 
-    SetStartEndNodes();
+    set_startend_nodes();
 
     m_playerPath.push_back(m_start); // initialize the player_path with start node
 }
@@ -65,19 +65,19 @@ bool Pathfinder::is_connected(node_t node1, node_t node2)
     return edge_info.find(std::pair{ node1, node2 }) != edge_info.end();
 }
 
-void Pathfinder::SetStartEndNodes()
+void Pathfinder::set_startend_nodes()
 {
-    m_start = GetRandomNode();
+    m_start = get_random_node();
 
-    m_end = GetRandomNode();
+    m_end = get_random_node();
 
     while (m_start == m_end)
     {
-        m_end = GetRandomNode();
+        m_end = get_random_node();
     }
 }
 
-node_t Pathfinder::GetRandomNode()
+node_t Pathfinder::get_random_node()
 {
     int min = 0;
     int max = m_availableNodes.size() - 1;
@@ -109,7 +109,7 @@ std::vector<node_t> Pathfinder::astar_pathfind(const Graph &g, node_t start, nod
     return path;
 }
 
-void Pathfinder::PopLastNode()
+void Pathfinder::pop_last_node()
 {
     node_t n1 = m_playerPath.back();
     m_playerPath.pop_back();
@@ -124,7 +124,7 @@ void Pathfinder::PopLastNode()
     m_curr = m_playerPath.back();
 }
 
-void Pathfinder::PushNode(node_t node)
+void Pathfinder::push_node(node_t node)
 {
     node_t n1 = m_playerPath.back();
     node_t n2 = node;
@@ -138,7 +138,7 @@ void Pathfinder::PushNode(node_t node)
     m_tokens = m_tokens - path_cost(pathCostList); // remove path cost from tokens
 }
 
-bool Pathfinder::NodeClicked(node_t node)
+bool Pathfinder::node_clicked(node_t node)
 {
     for (auto n : m_playerPath)
     {
@@ -152,7 +152,7 @@ bool Pathfinder::NodeClicked(node_t node)
     return false;
 }
 
-int Pathfinder::CalcScore()
+int Pathfinder::calc_score()
 {
     std::vector<node_t> idealPath = astar_pathfind(m_graph, m_start, m_end);
 
@@ -162,15 +162,15 @@ int Pathfinder::CalcScore()
     return idealCost - (idealCost - currCost);
 }
 
-void Pathfinder::ProcessNodeClick(node_t clickedNode)
+void Pathfinder::proc_node_click(node_t clickedNode)
 {
     if (clickedNode == m_curr && m_playerPath.size() > 1)
     {
-        PopLastNode();
+        pop_last_node();
         return;
     }
 
-    if (NodeClicked(clickedNode))
+    if (node_clicked(clickedNode))
     {
         return;
     }
@@ -178,18 +178,18 @@ void Pathfinder::ProcessNodeClick(node_t clickedNode)
     // Check if the node is connected to previous node
     if (is_connected(m_playerPath.back(), clickedNode))
     {
-        PushNode(clickedNode);
+        push_node(clickedNode);
         m_curr = clickedNode;
     }
 
     if (m_curr == m_end)
     {
-        m_score += CalcScore();
+        m_score += calc_score();
         reset();
     }
 }
 
-void Pathfinder::UpdateTime()
+void Pathfinder::update_time()
 {
     m_elapsedTime = GetTime() - m_startTime;
     m_remainingTime = m_time - m_elapsedTime;
@@ -201,14 +201,14 @@ void Pathfinder::Run()
     {
         if (!m_gameOver)
         {
-            UpdateTime();
+            update_time();
 
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
             {
                 if (auto opt = get_nearby_node(GetMousePosition()))
                 {
                     node_t clickedNode = *opt;
-                    ProcessNodeClick(clickedNode);
+                    proc_node_click(clickedNode);
                 }
             }
         }
